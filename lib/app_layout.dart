@@ -34,9 +34,12 @@ class _AppLayoutState extends State<AppLayout> {
         child: IndexedStack(
           index: _currentIndex,
           children: [
-            HomeScreen(),
-            Text('Search'),
-            Text('Profile'),
+            UserInfoSelector((user) {
+              if (user == null) {
+                return const SizedBox.shrink();
+              }
+              return HomeScreen(user: user);
+            }),
             UserInfoSelector((user) {
               if (user == null) {
                 return const SizedBox.shrink();
@@ -61,16 +64,6 @@ class _AppLayoutState extends State<AppLayout> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Colors.grey[400],
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-            backgroundColor: Colors.grey[400],
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
             backgroundColor: Colors.grey[400],
           ),
           BottomNavigationBarItem(

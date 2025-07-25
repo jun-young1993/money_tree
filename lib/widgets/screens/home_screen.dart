@@ -4,7 +4,8 @@ import 'package:money_tree/models/tree_model.dart';
 import 'package:money_tree/widgets/tree_widget.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final User user;
+  const HomeScreen({super.key, required this.user});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,12 +23,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _initializeTree() {
     _tree = TreeModel(
-      stage: TreeStage.smallTree,
+      stage: TreeStage.seed,
       currentPoints: 1250,
       pointsToNextStage: 600,
       totalEarnedPoints: 3200,
       level: 3,
-      username: "사용자",
+      username: widget.user.username ?? 'unknown',
       lastShakeTime: DateTime.now().subtract(Duration(minutes: 45)),
       shakeCount: 15,
     );
@@ -195,29 +196,11 @@ class _HomeScreenState extends State<HomeScreen> {
           slivers: [
             // 상단 앱바
             SliverAppBar(
-              expandedHeight: 100,
+              expandedHeight: 20,
               floating: false,
               pinned: true,
               backgroundColor: Colors.green[600],
-              flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  '돈나무',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.green[600]!, Colors.green[400]!],
-                    ),
-                  ),
-                ),
-              ),
+
               actions: [
                 IconButton(
                   icon: Icon(Icons.notifications, color: Colors.white),
@@ -233,7 +216,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-
             // 나무 섹션
             SliverToBoxAdapter(
               child: Container(
