@@ -38,6 +38,9 @@ class _AppLayoutState extends State<AppLayout> {
             Text('Search'),
             Text('Profile'),
             UserInfoSelector((user) {
+              if (user == null) {
+                return const SizedBox.shrink();
+              }
               return NoticeScreenLayout(
                 groupName: 'parking-zone-code-02782',
                 user: user,

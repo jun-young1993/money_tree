@@ -55,7 +55,31 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       });
 
-      // 포인트 획득 알림
+      // SnackBar로 성공 메시지 표시
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.eco, color: Colors.white, size: 20),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '나무를 흔들어서 ${_tree.pointsFromShake}포인트를 획득했어요!',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.green[600],
+          duration: Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+
+      // 포인트 획득 알림 (기존 다이얼로그는 유지)
       _showPointsEarnedDialog(_tree.pointsFromShake);
     }
   }
@@ -86,6 +110,30 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _tree = _tree.copyWith(stage: newStage, level: _tree.level + 1);
         });
+
+        // 성장 시에도 SnackBar로 성공 메시지 표시
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.trending_up, color: Colors.white, size: 20),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '축하해요! 나무가 ${_tree.stageName}로 성장했어요!',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.orange[600],
+            duration: Duration(seconds: 4),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
 
         _showGrowthDialog();
       }

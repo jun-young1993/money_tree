@@ -70,6 +70,29 @@ class _TreeWidgetState extends State<TreeWidget> with TickerProviderStateMixin {
     );
     final remainingMinutes = 30 - timeSinceLastShake.inMinutes;
 
+    // SnackBar로 알림 메시지 표시
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.timer, color: Colors.white, size: 20),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '$remainingMinutes분 후에 다시 시도해보세요.',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.orange[600],
+        duration: Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+
+    // 기존 다이얼로그도 유지
     showDialog(
       context: context,
       builder:

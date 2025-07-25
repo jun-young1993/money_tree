@@ -7,6 +7,7 @@ import 'package:flutter_common/state/notice_group/notice_group_bloc.dart';
 import 'package:flutter_common/state/notice_reply/notice_reply_bloc.dart';
 import 'package:flutter_common/state/user/user_bloc.dart';
 import 'package:flutter_common/state/verification/verification_bloc.dart';
+import 'package:flutter_common/state/verification/verification_listener.dart';
 import 'package:money_tree/app_layout.dart';
 import 'package:money_tree/route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -157,11 +158,15 @@ Future<void> main() async {
                 ),
           ),
         ],
-        child: EasyLocalization(
-          supportedLocales: const [Locale('ko'), Locale('en')],
-          path: 'packages/flutter_common/assets/translations',
-          fallbackLocale: const Locale('ko'),
-          child: const MyApp(),
+        child: Builder(
+          builder: (context) {
+            return EasyLocalization(
+              supportedLocales: const [Locale('ko'), Locale('en')],
+              path: 'packages/flutter_common/assets/translations',
+              fallbackLocale: const Locale('ko'),
+              child: const MyApp(),
+            );
+          },
         ),
       ),
     ),
@@ -189,7 +194,10 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const AppLayout(),
+      home: MultiBlocListener(
+        listeners: [VerificationListener(), NoticeListener()],
+        child: const AppLayout(),
+      ),
     );
   }
 }
