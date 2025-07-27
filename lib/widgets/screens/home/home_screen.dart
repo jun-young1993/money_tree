@@ -1,7 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_common/flutter_common.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart' hide AdError;
 import 'package:money_tree/models/tree_model.dart';
+import 'package:money_tree/route.dart';
+import 'package:money_tree/widgets/screens/home/sections/user_point_balance_section.dart';
+import 'package:money_tree/widgets/screens/notification/notification_list_screen.dart';
 import 'package:money_tree/widgets/tree_widget.dart';
+
+class MainShakeAdCallBack extends AdCallback {
+  final Function(RewardItem) onUserEarnedReward;
+
+  MainShakeAdCallBack({required this.onUserEarnedReward});
+
+  @override
+  void onAdLoaded() {
+    print('광고가 성공적으로 로드되었습니다!');
+    // 사용자에게 알림 표시
+  }
+
+  @override
+  void onRewardedAdLoaded(RewardedAd ad) {
+    print('광고가 로드되었습니다! 리워드');
+    ad.show(
+      onUserEarnedReward: (ad, reward) {
+        print('rewarded: ${reward.type} ${reward.amount}');
+
+        onUserEarnedReward(reward);
+      },
+    );
+    // 에러 처리 로직
+  }
+
+  @override
+  void onAdFailedToLoad(AdError error) {
+    print('광고 로드 실패: ${error.message}');
+    // 에러 처리 로직
+  }
+
+  @override
+  void onAdShown() {
+    print('광고가 표시되었습니다');
+    // 분석 이벤트 전송
+  }
+
+  @override
+  void onAdClosed() {
+    print('광고가 닫혔습니다');
+    // 다음 광고 미리 로드
+  }
+
+  @override
+  void onAdClicked() {
+    print('광고가 클릭되었습니다');
+  }
+
+  @override
+  void onRewardedAdUserEarnedReward(RewardItem reward) {
+    print('보상 획득: ${reward.amount} ${reward.type}');
+    // 보상 지급 로직
+  }
+}
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -14,11 +72,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late TreeModel _tree;
   bool _isShaking = false;
+  final AdMaster _adMaster = AdMaster();
 
   @override
   void initState() {
     super.initState();
     _initializeTree();
+  }
+
+  Future<void> _showRewardedAd() async {
+    await _adMaster.createRewardedAd(
+      adUnitId: 'ca-app-pub-4656262305566191/9055227275',
+      callback: MainShakeAdCallBack(onUserEarnedReward: (reward) {}),
+    );
   }
 
   void _initializeTree() {
@@ -200,12 +266,13 @@ class _HomeScreenState extends State<HomeScreen> {
               floating: false,
               pinned: true,
               backgroundColor: Colors.green[600],
-
+              title: Text('돈 나무', style: TextStyle(color: Colors.white)),
               actions: [
                 IconButton(
                   icon: Icon(Icons.notifications, color: Colors.white),
                   onPressed: () {
                     // 알림 화면으로 이동
+                    AppNavigator.I.push(AppRoutes.notification);
                   },
                 ),
                 IconButton(
@@ -215,6 +282,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ],
+            ),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 50,
+                child: AdMasterWidget(
+                  adType: AdType.banner,
+                  adUnitId: 'ca-app-pub-4656262305566191/8144604315',
+                  builder: (state, ad) {
+                    return state.isLoaded && ad != null
+                        ? AdWidget(ad: ad)
+                        : SizedBox.shrink();
+                  },
+                ),
+              ),
             ),
             // 나무 섹션
             SliverToBoxAdapter(
@@ -277,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Center(
                         child: TreeWidget(
                           tree: _tree,
-                          onShake: _handleTreeShake,
+                          onShake: _showRewardedAd,
                           isShaking: _isShaking,
                         ),
                       ),
@@ -307,121 +388,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-
-            // 포인트 정보
-            SliverToBoxAdapter(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 16),
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      blurRadius: 5,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '현재 포인트',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              '${_tree.currentPoints} P',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '총 획득 포인트',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              '${_tree.totalEarnedPoints} P',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-
-                    // 성장 진행률
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '다음 단계까지',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Text(
-                              '${_tree.currentPoints}/${_tree.nextStagePoints} P',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        LinearProgressIndicator(
-                          value: _tree.progressToNextStage,
-                          backgroundColor: Colors.grey[300],
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.green,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          _tree.stageDescription,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
+            // UserPointBalanceSection(),
+            AppRewardUserPointBalanceSelector((userPointBalance) {
+              return SliverToBoxAdapter(child: UserPointBalanceSection());
+            }),
             // 빠른 액션 버튼들
             SliverToBoxAdapter(
               child: Container(

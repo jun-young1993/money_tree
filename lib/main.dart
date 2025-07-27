@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_common/constants/juny_constants.dart';
 import 'package:flutter_common/flutter_common.dart';
 import 'package:flutter_common/network/dio_client.dart';
+import 'package:flutter_common/repositories/app_reward_repository.dart';
+import 'package:flutter_common/state/app_reward/app_reward_bloc.dart';
 import 'package:flutter_common/state/notice/notice_bloc.dart';
 import 'package:flutter_common/state/notice_group/notice_group_bloc.dart';
 import 'package:flutter_common/state/notice_reply/notice_reply_bloc.dart';
@@ -23,6 +25,9 @@ Future<void> main() async {
    * @see https://api.flutter.dev/flutter/widgets/WidgetsFlutterBinding/ensureInitialized.html
    */
   WidgetsFlutterBinding.ensureInitialized();
+
+  final adMaster = AdMaster();
+  await adMaster.initialize(AdConfig());
 
   /**
    * 에러 처리 초기화
@@ -119,6 +124,9 @@ Future<void> main() async {
           create:
               (context) => NoticeReplyDefaultRepository(dioClient: dioClient),
         ),
+        RepositoryProvider<AppRewardRepository>(
+          create: (context) => AppRewardDefaultRepository(dioClient: dioClient),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -155,6 +163,13 @@ Future<void> main() async {
             create:
                 (context) => NoticeReplyBloc(
                   noticeReplyRepository: context.read<NoticeReplyRepository>(),
+                ),
+          ),
+          BlocProvider(
+            create:
+                (context) => AppRewardBloc(
+                  appRewardRepository: context.read<AppRewardRepository>(),
+                  userRepository: context.read<UserRepository>(),
                 ),
           ),
         ],

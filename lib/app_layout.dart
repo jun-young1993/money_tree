@@ -6,7 +6,7 @@ import 'package:flutter_common/state/user/user_event.dart';
 import 'package:flutter_common/state/user/user_selector.dart';
 import 'package:flutter_common/widgets/layout/notice_screen_layout.dart';
 import 'package:flutter_common/widgets/layout/setting_screen_layout.dart';
-import 'package:money_tree/widgets/screens/home_screen.dart';
+import 'package:money_tree/widgets/screens/home/home_screen.dart';
 
 class AppLayout extends StatefulWidget {
   const AppLayout({super.key});
@@ -18,11 +18,12 @@ class AppLayout extends StatefulWidget {
 class _AppLayoutState extends State<AppLayout> {
   int _currentIndex = 0;
   UserBloc get userBloc => context.read<UserBloc>();
-
+  AppRewardBloc get appRewardBloc => context.read<AppRewardBloc>();
   @override
   void initState() {
     super.initState();
     userBloc.add(const UserEvent.initialize());
+    appRewardBloc.add(const AppRewardEvent.initialize());
   }
 
   @override
@@ -36,13 +37,13 @@ class _AppLayoutState extends State<AppLayout> {
           children: [
             UserInfoSelector((user) {
               if (user == null) {
-                return const SizedBox.shrink();
+                return const CircularProgressIndicator();
               }
               return HomeScreen(user: user);
             }),
             UserInfoSelector((user) {
               if (user == null) {
-                return const SizedBox.shrink();
+                return const CircularProgressIndicator();
               }
               return NoticeScreenLayout(
                 groupName: 'parking-zone-code-02782',

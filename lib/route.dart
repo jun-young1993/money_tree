@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_common/app_navigation.dart';
+import 'package:flutter_common/state/user/user_selector.dart';
 import 'package:flutter_common/widgets/fade_route.dart';
+import 'package:money_tree/widgets/screens/home/home_screen.dart';
+import 'package:money_tree/widgets/screens/notification/notification_list_screen.dart';
 
-enum AppRoutes { main }
+enum AppRoutes { main, notification }
 
 class AppPaths implements IPath<AppRoutes> {
   static const main = '/main';
+  static const notification = '/notification';
 
-  static const _path = {AppRoutes.main: main};
+  static const _path = {
+    AppRoutes.main: main,
+    AppRoutes.notification: notification,
+  };
 
   @override
   String of(AppRoutes route) => _path[route] ?? '';
@@ -19,7 +26,16 @@ class AppPaths implements IPath<AppRoutes> {
 
     switch (settings.name) {
       case AppPaths.main:
-        return FadeRoute(page: Text('main'));
+        return FadeRoute(
+          page: UserInfoSelector((user) {
+            if (user == null) {
+              return const CircularProgressIndicator();
+            }
+            return HomeScreen(user: user);
+          }),
+        );
+      case AppPaths.notification:
+        return FadeRoute(page: NotificationListScreen());
       default:
         return FadeRoute(page: Text('default'));
     }
