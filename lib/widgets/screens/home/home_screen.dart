@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_common/flutter_common.dart';
+import 'package:flutter_common/models/app-reward/point_transaction.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart' hide AdError;
 import 'package:money_tree/models/tree_model.dart';
 import 'package:money_tree/route.dart';
@@ -72,16 +73,30 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final bool _isShaking = false;
   final AdMaster _adMaster = AdMaster();
+  AppRewardBloc get _appRewardBloc => context.read<AppRewardBloc>();
 
   @override
   void initState() {
     super.initState();
+    _appRewardBloc.add(
+      AppRewardEvent.getDailyUserReward(
+        PointTransactionSource.admob_reward,
+      ),
+    );
   }
 
   Future<void> _showRewardedAd() async {
     await _adMaster.createRewardedAd(
       adUnitId: 'ca-app-pub-4656262305566191/9055227275',
-      callback: MainShakeAdCallBack(onUserEarnedReward: (reward) {}),
+      callback: MainShakeAdCallBack(
+        onUserEarnedReward: (reward) {
+          _appRewardBloc.add(
+            AppRewardEvent.getDailyUserReward(
+              PointTransactionSource.admob_reward,
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -160,11 +175,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     // 나무 위젯
                     Expanded(
                       child: Center(
-                        child: AppRewardDailyPointTransactionsSelector((
-                          transactions,
+                        child: AppRewardDailyUserRewardSelector((
+                          dailyUserReward,
                         ) {
                           return TreeWidget(
-                            transactions: transactions ?? [],
+                            transactions: dailyUserReward ?? [],
                             onShake: _showRewardedAd,
                             isShaking: _isShaking,
                           );

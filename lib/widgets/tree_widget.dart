@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_common/models/app-reward/point_transaction.dart';
 
 class TreeWidget extends StatefulWidget {
-  final List<PointTransaction>? transactions;
+  final List<UserReward>? transactions;
   final VoidCallback? onShake;
   final bool isShaking;
 
@@ -54,10 +54,13 @@ class _TreeWidgetState extends State<TreeWidget> with TickerProviderStateMixin {
   }
 
   void _handleShake() {
-    _shakeController.forward().then((_) {
-      _shakeController.reverse();
-    });
-    widget.onShake!();
+    final treeStages = _buildTreeStages();
+    if (widget.transactions!.length <= treeStages.length) {
+      _shakeController.forward().then((_) {
+        _shakeController.reverse();
+      });
+      widget.onShake!();
+    }
   }
 
   @override
@@ -79,16 +82,22 @@ class _TreeWidgetState extends State<TreeWidget> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTree() {
-    final treeStages = [
+  List<Widget> _buildTreeStages() {
+    return [
       _buildSeed(),
       _buildSprout(),
       _buildSmallTree(),
       _buildGrowingTree(),
       _buildBigTree(),
     ];
+  }
 
-    return treeStages[widget.transactions?.length ?? 0];
+  Widget _buildTree() {
+    final treeStages = _buildTreeStages();
+    if (widget.transactions!.length > treeStages.length) {
+      return treeStages[treeStages.length - 1];
+    }
+    return treeStages[widget.transactions!.length];
   }
 
   Widget _buildSeed() {
