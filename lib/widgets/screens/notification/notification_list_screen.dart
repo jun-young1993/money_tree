@@ -1,94 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_common/flutter_common.dart';
 import 'package:flutter_common/models/app-reward/point_transaction.dart';
-
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:money_tree/models/notification_model.dart';
 
 class NotificationListScreen extends StatefulWidget {
-  const NotificationListScreen({super.key});
+  final User user;
+  const NotificationListScreen({super.key, required this.user});
 
   @override
   State<NotificationListScreen> createState() => _NotificationListScreenState();
 }
 
 class _NotificationListScreenState extends State<NotificationListScreen> {
-  AppRewardBloc get appRewardBloc => context.read<AppRewardBloc>();
-
-  final List<NotificationModel> _notifications = [];
+  PointTransactionPagingBloc get pointTransactionPagingBloc =>
+      context.read<PointTransactionPagingBloc>();
 
   @override
   void initState() {
     super.initState();
-    appRewardBloc.add(const AppRewardEvent.getPointTransactions());
   }
 
-  List<NotificationModel> _generateSampleNotifications() {
-    return [
-      NotificationModel(
-        id: '1',
-        title: '나무 흔들기 포인트 획득',
-        content: '나무를 흔들어서 25포인트를 획득했습니다.',
-        date: DateTime.now().subtract(Duration(minutes: 5)),
-        points: 25,
-        type: NotificationType.reward,
-      ),
-      NotificationModel(
-        id: '2',
-        title: '친구 초대 미션 완료',
-        content: '친구를 초대하여 50포인트를 획득했습니다.',
-        date: DateTime.now().subtract(Duration(hours: 2)),
-        points: 50,
-        type: NotificationType.mission,
-      ),
-      NotificationModel(
-        id: '3',
-        title: '나무 성장 축하!',
-        content: '축하합니다! 나무가 새싹으로 성장했습니다.',
-        date: DateTime.now().subtract(Duration(hours: 5)),
-        points: 100,
-        type: NotificationType.growth,
-      ),
-      NotificationModel(
-        id: '4',
-        title: '스타벅스 아메리카노 교환',
-        content: '200포인트를 사용하여 스타벅스 아메리카노를 교환했습니다.',
-        date: DateTime.now().subtract(Duration(days: 1)),
-        points: -200,
-        type: NotificationType.reward,
-      ),
-      NotificationModel(
-        id: '5',
-        title: '리뷰 작성 미션 완료',
-        content: '앱 리뷰를 작성하여 30포인트를 획득했습니다.',
-        date: DateTime.now().subtract(Duration(days: 1)),
-        points: 30,
-        type: NotificationType.mission,
-      ),
-      NotificationModel(
-        id: '6',
-        title: '시스템 점검 안내',
-        content: '오늘 밤 12시부터 2시간 동안 시스템 점검이 예정되어 있습니다.',
-        date: DateTime.now().subtract(Duration(days: 2)),
-        points: 0,
-        type: NotificationType.system,
-      ),
-      NotificationModel(
-        id: '7',
-        title: '여름 이벤트 시작',
-        content: '여름 한정 이벤트가 시작되었습니다. 특별한 리워드를 확인해보세요!',
-        date: DateTime.now().subtract(Duration(days: 3)),
-        points: 0,
-        type: NotificationType.event,
-      ),
-      NotificationModel(
-        id: '8',
-        title: '일일 로그인 보상',
-        content: '오늘도 로그인하여 10포인트를 획득했습니다.',
-        date: DateTime.now().subtract(Duration(days: 3)),
-        points: 10,
-        type: NotificationType.reward,
-      ),
-    ];
+  @override
+  void dispose() {
+    pointTransactionPagingBloc.close();
+    super.dispose();
   }
 
   @override
@@ -229,58 +165,36 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   }
 
   Widget _buildNotificationList() {
-    return AppRewardPointTransactionsSelector((pointTransactions) {
-      if (pointTransactions == null || pointTransactions.isEmpty) {
-        return _buildEmptyList();
-      }
-
-      // 날짜별로 그룹화
-      Map<String, List<PointTransaction>> groupedTransactions = {};
-      for (var transaction in pointTransactions) {
-        String dateKey = _formatDate(transaction.createdAt);
-        if (!groupedTransactions.containsKey(dateKey)) {
-          groupedTransactions[dateKey] = [];
-        }
-        groupedTransactions[dateKey]!.add(transaction);
-      }
-
-      return ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: groupedTransactions.length,
-        itemBuilder: (context, index) {
-          String dateKey = groupedTransactions.keys.elementAt(index);
-          List<PointTransaction> transactions = groupedTransactions[dateKey]!;
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 날짜 헤더
-
-              // 해당 날짜의 알림들
-              ...transactions.map(
-                (transaction) => _buildNotificationItem(transaction),
-              ),
-              SizedBox(height: 16),
-            ],
-          );
-        },
-      );
-    });
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(Duration(days: 1));
-    final transactionDate = DateTime(date.year, date.month, date.day);
-
-    if (transactionDate == today) {
-      return '오늘';
-    } else if (transactionDate == yesterday) {
-      return '어제';
-    } else {
-      return '${date.year}년 ${date.month}월 ${date.day}일';
-    }
+    return BlocBuilder<
+      PointTransactionPagingBloc,
+      PagingState<int, PointTransaction>
+    >(
+      bloc: pointTransactionPagingBloc,
+      builder:
+          (context, state) => PagedListView<int, PointTransaction>(
+            state: state,
+            fetchNextPage: () async {
+              pointTransactionPagingBloc.add(FetchNextPointTransaction());
+            },
+            builderDelegate: PagedChildBuilderDelegate<PointTransaction>(
+              itemBuilder:
+                  (context, item, index) => _buildNotificationItem(item),
+              firstPageProgressIndicatorBuilder:
+                  (_) => CircularProgressIndicator(),
+              newPageProgressIndicatorBuilder:
+                  (_) => CircularProgressIndicator(),
+              noItemsFoundIndicatorBuilder: (_) => _buildEmptyList(),
+              noMoreItemsIndicatorBuilder:
+                  (_) => Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      Tr.message.lastNotice.tr(),
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ),
+            ),
+          ),
+    );
   }
 
   Widget _buildNotificationItem(PointTransaction pointTransaction) {

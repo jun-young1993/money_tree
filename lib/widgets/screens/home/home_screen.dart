@@ -289,10 +289,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: AdMasterWidget(
                   adType: AdType.banner,
                   adUnitId: 'ca-app-pub-4656262305566191/8144604315',
+                  androidAdUnitId: 'ca-app-pub-4656262305566191/8550732762',
                   builder: (state, ad) {
                     return state.isLoaded && ad != null
                         ? AdWidget(ad: ad)
-                        : SizedBox.shrink();
+                        : CircularProgressIndicator();
                   },
                 ),
               ),

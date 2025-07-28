@@ -1,4 +1,4 @@
-package com.example.money_tree
+package juny.money_tree
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -31,8 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_common:
-    path: /Users/junyoungkim/Desktop/junyoung/app/source/flutter_common
-    # path: C:/Users/junyoung/junyoung/source/flutter_common
+    # path: /Users/junyoungkim/Desktop/junyoung/app/source/flutter_common
+    path: C:/Users/junyoung/junyoung/source/flutter_common
     # git:
     #   url: https://github.com/jun-young1993/flutter_common.git
     #   ref: v1.0.17
@@ -40,6 +40,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   google_mobile_ads: ^6.0.0
+  infinite_scroll_pagination: ^5.1.0
 
 dev_dependencies:
   flutter_test:

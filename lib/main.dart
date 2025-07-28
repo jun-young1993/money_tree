@@ -5,6 +5,7 @@ import 'package:flutter_common/network/dio_client.dart';
 import 'package:flutter_common/repositories/app_reward_repository.dart';
 import 'package:flutter_common/state/app_reward/app_reward_bloc.dart';
 import 'package:flutter_common/state/notice/notice_bloc.dart';
+import 'package:flutter_common/state/notice/notice_page_bloc.dart';
 import 'package:flutter_common/state/notice_group/notice_group_bloc.dart';
 import 'package:flutter_common/state/notice_reply/notice_reply_bloc.dart';
 import 'package:flutter_common/state/user/user_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_common/state/verification/verification_bloc.dart';
 import 'package:flutter_common/state/verification/verification_listener.dart';
 import 'package:money_tree/app_layout.dart';
 import 'package:money_tree/route.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 ///
@@ -161,6 +163,12 @@ Future<void> main() async {
           ),
           BlocProvider(
             create:
+                (context) => NoticePageBloc(
+                  noticeRepository: context.read<NoticeRepository>(),
+                ),
+          ),
+          BlocProvider(
+            create:
                 (context) => NoticeReplyBloc(
                   noticeReplyRepository: context.read<NoticeReplyRepository>(),
                 ),
@@ -168,6 +176,13 @@ Future<void> main() async {
           BlocProvider(
             create:
                 (context) => AppRewardBloc(
+                  appRewardRepository: context.read<AppRewardRepository>(),
+                  userRepository: context.read<UserRepository>(),
+                ),
+          ),
+          BlocProvider(
+            create:
+                (context) => PointTransactionPagingBloc(
                   appRewardRepository: context.read<AppRewardRepository>(),
                   userRepository: context.read<UserRepository>(),
                 ),

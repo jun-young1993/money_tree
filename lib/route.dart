@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_common/app_navigation.dart';
+import 'package:flutter_common/models/user/user.dart';
 import 'package:flutter_common/state/user/user_selector.dart';
 import 'package:flutter_common/widgets/fade_route.dart';
 import 'package:money_tree/widgets/screens/home/home_screen.dart';
@@ -35,7 +36,14 @@ class AppPaths implements IPath<AppRoutes> {
           }),
         );
       case AppPaths.notification:
-        return FadeRoute(page: NotificationListScreen());
+        return FadeRoute(
+          page: UserInfoSelector((user) {
+            if (user == null) {
+              return const CircularProgressIndicator();
+            }
+            return NotificationListScreen(user: user);
+          }),
+        );
       default:
         return FadeRoute(page: Text('default'));
     }

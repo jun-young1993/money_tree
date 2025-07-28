@@ -6,6 +6,7 @@ import 'package:flutter_common/state/user/user_event.dart';
 import 'package:flutter_common/state/user/user_selector.dart';
 import 'package:flutter_common/widgets/layout/notice_screen_layout.dart';
 import 'package:flutter_common/widgets/layout/setting_screen_layout.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:money_tree/widgets/screens/home/home_screen.dart';
 
 class AppLayout extends StatefulWidget {
@@ -48,6 +49,16 @@ class _AppLayoutState extends State<AppLayout> {
               return NoticeScreenLayout(
                 groupName: 'parking-zone-code-02782',
                 user: user,
+                detailAd: AdMasterWidget(
+                  adType: AdType.banner,
+                  adUnitId: 'ca-app-pub-4656262305566191/6746195491',
+                  androidAdUnitId: 'ca-app-pub-4656262305566191/7046079402',
+                  builder: (state, ad) {
+                    return state.isLoaded && ad != null
+                        ? AdWidget(ad: ad)
+                        : Text('test');
+                  },
+                ),
               );
             }),
             SettingScreenLayout(appKey: AppKeys.moneyTree),
