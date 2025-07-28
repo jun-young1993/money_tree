@@ -61,7 +61,10 @@ class _AppLayoutState extends State<AppLayout> {
                 ),
               );
             }),
-            SettingScreenLayout(appKey: AppKeys.moneyTree),
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: SettingScreenLayout(appKey: AppKeys.moneyTree),
+            ),
           ],
         ),
       ),

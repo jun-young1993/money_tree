@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:money_tree/models/tree_model.dart';
+import 'package:flutter_common/models/app-reward/point_transaction.dart';
 
 class TreeWidget extends StatefulWidget {
-  final TreeModel tree;
+  final List<PointTransaction>? transactions;
   final VoidCallback? onShake;
   final bool isShaking;
 
   const TreeWidget({
     super.key,
-    required this.tree,
+    this.transactions,
     this.onShake,
     this.isShaking = false,
   });
@@ -54,61 +54,10 @@ class _TreeWidgetState extends State<TreeWidget> with TickerProviderStateMixin {
   }
 
   void _handleShake() {
-    if (widget.tree.canShake && widget.onShake != null) {
-      _shakeController.forward().then((_) {
-        _shakeController.reverse();
-      });
-      widget.onShake!();
-    } else if (!widget.tree.canShake) {
-      _showShakeCooldownDialog();
-    }
-  }
-
-  void _showShakeCooldownDialog() {
-    final timeSinceLastShake = DateTime.now().difference(
-      widget.tree.lastShakeTime,
-    );
-    final remainingMinutes = 30 - timeSinceLastShake.inMinutes;
-
-    // SnackBar로 알림 메시지 표시
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.timer, color: Colors.white, size: 20),
-            SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                '$remainingMinutes분 후에 다시 시도해보세요.',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.orange[600],
-        duration: Duration(seconds: 3),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
-
-    // 기존 다이얼로그도 유지
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text('잠시만요!'),
-            content: Text(
-              '나무를 흔들 수 있는 시간이 아직이에요.\n$remainingMinutes분 후에 다시 시도해보세요.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('확인'),
-              ),
-            ],
-          ),
-    );
+    _shakeController.forward().then((_) {
+      _shakeController.reverse();
+    });
+    widget.onShake!();
   }
 
   @override
@@ -131,18 +80,15 @@ class _TreeWidgetState extends State<TreeWidget> with TickerProviderStateMixin {
   }
 
   Widget _buildTree() {
-    switch (widget.tree.stage) {
-      case TreeStage.seed:
-        return _buildSeed();
-      case TreeStage.sprout:
-        return _buildSprout();
-      case TreeStage.smallTree:
-        return _buildSmallTree();
-      case TreeStage.growingTree:
-        return _buildGrowingTree();
-      case TreeStage.bigTree:
-        return _buildBigTree();
-    }
+    final treeStages = [
+      _buildSeed(),
+      _buildSprout(),
+      _buildSmallTree(),
+      _buildGrowingTree(),
+      _buildBigTree(),
+    ];
+
+    return treeStages[widget.transactions?.length ?? 0];
   }
 
   Widget _buildSeed() {

@@ -68,41 +68,6 @@ class UserPointBalanceSection extends StatelessWidget {
               ],
             ),
             SizedBox(height: 16),
-
-            // 성장 진행률
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '다음 단계까지',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                    ),
-                    Text(
-                      '${userPointBalance.currentPoints}/0 P',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[600],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                LinearProgressIndicator(
-                  value: 0,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '${userPointBalance.currentPoints}/0 P',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-              ],
-            ),
           ],
         ),
       );
