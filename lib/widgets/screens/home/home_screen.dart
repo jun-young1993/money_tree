@@ -79,9 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _appRewardBloc.add(
-      AppRewardEvent.getDailyUserReward(
-        PointTransactionSource.admob_reward,
-      ),
+      AppRewardEvent.getDailyUserReward(PointTransactionSource.admob_reward),
     );
   }
 
