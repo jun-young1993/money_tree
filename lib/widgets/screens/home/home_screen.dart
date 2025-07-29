@@ -173,15 +173,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     // 나무 위젯
                     Expanded(
                       child: Center(
-                        child: AppRewardDailyUserRewardSelector((
-                          dailyUserReward,
-                        ) {
-                          return TreeWidget(
-                            transactions: dailyUserReward ?? [],
-                            onShake: _showRewardedAd,
-                            isShaking: _isShaking,
-                          );
-                        }),
+                        child: TreeWidget(
+                          tree: TreeModel(
+                            stage: TreeStage.seed,
+                            currentPoints: 0,
+                            pointsToNextStage: 100,
+                            totalEarnedPoints: 0,
+                            level: 1,
+                            username: widget.user.username ?? '사용자',
+                            lastShakeTime: DateTime.now().subtract(
+                              Duration(hours: 1),
+                            ),
+                            shakeCount: 0,
+                          ),
+                          onShake: _showRewardedAd,
+                        ),
                       ),
                     ),
 

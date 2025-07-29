@@ -1,0 +1,25 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bigTrunk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4E342E"/>
+      <stop offset="100%" stop-color="#1B1B1B"/>
+    </linearGradient>
+    <radialGradient id="bigLeaf" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#B2FF59"/>
+      <stop offset="100%" stop-color="#1B5E20"/>
+    </radialGradient>
+    <filter id="bigShadow" x="0" y="0" width="200" height="200">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <!-- 줄기 -->
+  <rect x="90" y="80" width="20" height="80" rx="10" fill="url(#bigTrunk)" filter="url(#bigShadow)"/>
+  <!-- 메인 잎 -->
+  <ellipse cx="100" cy="70" rx="65" ry="50" fill="url(#bigLeaf)" filter="url(#bigShadow)"/>
+  <!-- 작은 잎들 -->
+  <ellipse cx="60" cy="100" rx="25" ry="15" fill="url(#bigLeaf)" opacity="0.7"/>
+  <ellipse cx="140" cy="95" rx="22" ry="12" fill="url(#bigLeaf)" opacity="0.7"/>
+  <ellipse cx="100" cy="50" rx="30" ry="12" fill="url(#bigLeaf)" opacity="0.5"/>
+  <!-- 하이라이트 -->
+  <ellipse cx="120" cy="60" rx="15" ry="6" fill="#fff" opacity="0.10"/>
+</svg>
