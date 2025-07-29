@@ -7,6 +7,7 @@ import 'package:money_tree/route.dart';
 import 'package:money_tree/widgets/screens/home/sections/user_info_section.dart';
 import 'package:money_tree/widgets/screens/home/sections/user_point_balance_section.dart';
 import 'package:money_tree/widgets/tree_widget.dart';
+import 'package:money_tree/widgets/flowing_text_widget.dart';
 
 class MainShakeAdCallBack extends AdCallback {
   final Function(RewardItem) onUserEarnedReward;
@@ -71,7 +72,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final bool _isShaking = false;
   final AdMaster _adMaster = AdMaster();
   AppRewardBloc get _appRewardBloc => context.read<AppRewardBloc>();
 
@@ -143,6 +143,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            SliverToBoxAdapter(
+              child: FlowingTextWidget(
+                messages: [
+                  '💰 매일 나무를 흔들면 포인트가 쌓여요!',
+                  '📝 게시글 작성하면 조회수만큼 포인트를 받아요',
+                  '🎁 포인트로 현금처럼 사용할 수 있어요',
+                  '🌳 나무가 클수록 더 많은 포인트를 받아요',
+                  '⚡ 하루 3번만 흔들어도 포인트가 쌓여요',
+                  '📊 인기 게시글은 더 많은 포인트를 받아요',
+                  '🏆 친구들과 경쟁하며 나무를 키워보세요',
+                  '💎 특별한 날에는 더 많은 포인트를 받아요',
+                  '🎯 목표를 달성하면 보너스 포인트가 있어요',
+                  '🌟 VIP 회원은 2배 포인트를 받아요',
+                  '🔥 연속 출석하면 매일 포인트가 증가해요',
+                  '📈 조회수가 높을수록 포인트도 높아져요',
+                  '💫 나무가 완성되면 특별한 보상을 받아요',
+                  '📱 게시글 공유하면 추가 포인트를 받아요',
+                ],
+                duration: Duration(seconds: 4),
+                backgroundColor: Colors.white.withOpacity(0.9),
+                textStyle: TextStyle(
+                  color: Colors.green[700],
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+
             // 나무 섹션
             SliverToBoxAdapter(
               child: Container(
@@ -168,47 +196,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     // 사용자 정보
                     UserInfoSection(user: widget.user),
-                    SizedBox(height: 20),
 
                     // 나무 위젯
                     Expanded(
                       child: Center(
-                        child: TreeWidget(
-                          tree: TreeModel(
-                            stage: TreeStage.seed,
-                            currentPoints: 0,
-                            pointsToNextStage: 100,
-                            totalEarnedPoints: 0,
-                            level: 1,
-                            username: widget.user.username ?? '사용자',
-                            lastShakeTime: DateTime.now().subtract(
-                              Duration(hours: 1),
-                            ),
-                            shakeCount: 0,
-                          ),
-                          onShake: _showRewardedAd,
-                        ),
+                        child: AppRewardDailyUserRewardSelector((
+                          dailyUserReward,
+                        ) {
+                          return TreeWidget(
+                            userRewards:
+                                dailyUserReward[PointTransactionSource
+                                    .admob_reward],
+                            onShake: _showRewardedAd,
+                            user: widget.user,
+                          );
+                        }),
                       ),
                     ),
 
-                    // 흔들기 안내
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '🌳 나무를 터치해서 포인트를 받으세요!',
-                        style: TextStyle(
-                          color: Colors.green[700],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                    // 흐르는 정보 텍스트
                   ],
                 ),
               ),
