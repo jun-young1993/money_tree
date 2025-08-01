@@ -38,13 +38,13 @@ class _AppLayoutState extends State<AppLayout> {
           children: [
             UserInfoSelector((user) {
               if (user == null) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
               return HomeScreen(user: user);
             }),
             UserInfoSelector((user) {
               if (user == null) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
               return NoticeScreenLayout(
                 groupName: 'parking-zone-code-02782',

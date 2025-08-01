@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_common/constants/juny_constants.dart';
 import 'package:flutter_common/flutter_common.dart';
 import 'package:flutter_common/models/app-reward/point_transaction.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart' hide AdError;
@@ -111,8 +112,18 @@ class _HomeScreenState extends State<HomeScreen> {
               floating: false,
               pinned: true,
               backgroundColor: Colors.green[600],
-              title: Text('돈 나무', style: TextStyle(color: Colors.white)),
+              title: Text(
+                JunyConstants.appNames[AppKeys.moneyTree]!,
+                style: TextStyle(color: Colors.white),
+              ),
               actions: [
+                IconButton(
+                  icon: Icon(Icons.account_balance_wallet, color: Colors.white),
+                  onPressed: () {
+                    // 환전 화면으로 이동
+                    AppNavigator.I.push(AppRoutes.exchange);
+                  },
+                ),
                 IconButton(
                   icon: Icon(Icons.notifications, color: Colors.white),
                   onPressed: () {
@@ -120,12 +131,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     AppNavigator.I.push(AppRoutes.notification);
                   },
                 ),
-                IconButton(
-                  icon: Icon(Icons.person, color: Colors.white),
-                  onPressed: () {
-                    // 프로필 화면으로 이동
-                  },
-                ),
+                // IconButton(
+                //   icon: Icon(Icons.person, color: Colors.white),
+                //   onPressed: () {
+                //     // 프로필 화면으로 이동
+                //   },
+                // ),
               ],
             ),
             SliverToBoxAdapter(
@@ -219,9 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            AppRewardUserPointBalanceSelector((userPointBalance) {
-              return SliverToBoxAdapter(child: UserPointBalanceSection());
-            }),
+            SliverToBoxAdapter(child: UserPointBalanceSection()),
           ],
         ),
       ),

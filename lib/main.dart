@@ -87,9 +87,8 @@ Future<void> main() async {
   final sharedPreferences = await SharedPreferences.getInstance();
 
   DioClient dioClient = DioClient(
-    baseUrl: 'https://juny-api.kr',
-    debugBaseUrl: 'https://juny-api.kr',
-    useLogInterceptor: true,
+    baseUrl: JunyConstants.apiBaseUrl,
+    useLogInterceptor: false,
   );
 
   runApp(
@@ -193,7 +192,7 @@ Future<void> main() async {
             return EasyLocalization(
               supportedLocales: const [Locale('ko'), Locale('en')],
               path: 'packages/flutter_common/assets/translations',
-              fallbackLocale: const Locale('ko'),
+              fallbackLocale: const Locale('en'),
               child: const MyApp(),
             );
           },
@@ -210,7 +209,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '돈나무',
+      title: '${JunyConstants.appNames[AppKeys.moneyTree]!} 🌳💰',
       navigatorKey: AppNavigator.I.navigatorKey,
       onGenerateRoute: AppNavigator.I.onGenerateRoute,
       localizationsDelegates: context.localizationDelegates,

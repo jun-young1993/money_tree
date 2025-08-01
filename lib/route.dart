@@ -5,16 +5,19 @@ import 'package:flutter_common/state/user/user_selector.dart';
 import 'package:flutter_common/widgets/fade_route.dart';
 import 'package:money_tree/widgets/screens/home/home_screen.dart';
 import 'package:money_tree/widgets/screens/notification/notification_list_screen.dart';
+import 'package:money_tree/widgets/screens/exchange/exchange_screen.dart';
 
-enum AppRoutes { main, notification }
+enum AppRoutes { main, notification, exchange }
 
 class AppPaths implements IPath<AppRoutes> {
   static const main = '/main';
   static const notification = '/notification';
+  static const exchange = '/exchange';
 
   static const _path = {
     AppRoutes.main: main,
     AppRoutes.notification: notification,
+    AppRoutes.exchange: exchange,
   };
 
   @override
@@ -42,6 +45,15 @@ class AppPaths implements IPath<AppRoutes> {
               return const CircularProgressIndicator();
             }
             return NotificationListScreen(user: user);
+          }),
+        );
+      case AppPaths.exchange:
+        return FadeRoute(
+          page: UserInfoSelector((user) {
+            if (user == null) {
+              return const CircularProgressIndicator();
+            }
+            return const ExchangeScreen();
           }),
         );
       default:
