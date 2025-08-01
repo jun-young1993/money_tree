@@ -88,7 +88,8 @@ Future<void> main() async {
 
   DioClient dioClient = DioClient(
     baseUrl: JunyConstants.apiBaseUrl,
-    useLogInterceptor: false,
+    debugBaseUrl: JunyConstants.apiBaseUrl,
+    useLogInterceptor: true,
   );
 
   runApp(

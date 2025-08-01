@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_common/flutter_common.dart';
 import 'package:flutter_common/models/app-reward/user_point_balance.dart';
+import 'package:flutter_common/state/app_reward/app_reward_bloc.dart';
 import 'package:intl/intl.dart';
 
 class ExchangeScreen extends StatefulWidget {
@@ -12,6 +13,7 @@ class ExchangeScreen extends StatefulWidget {
 }
 
 class _ExchangeScreenState extends State<ExchangeScreen> {
+  AppRewardBloc get appRewardBloc => context.read<AppRewardBloc>();
   final _formKey = GlobalKey<FormState>();
   final _accountNumberController = TextEditingController();
   final _accountHolderController = TextEditingController();
@@ -48,7 +50,20 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
   }
 
   void _submitExchange() {
-    if (_formKey.currentState!.validate()) {}
+    if (_formKey.currentState!.validate()) {
+      appRewardBloc.add(
+        AppRewardEvent.createWithdrawal(
+          _selectedBank!,
+          _accountNumberController.text.trim(),
+          _accountHolderController.text.trim(),
+          int.parse(_exchangeAmountController.text.trim()),
+        ),
+      );
+      AppNavigator.I.pop();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('환전 신청이 완료되었습니다.')));
+    }
   }
 
   @override
