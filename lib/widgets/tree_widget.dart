@@ -53,8 +53,17 @@ class _TreeWidgetState extends State<TreeWidget> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  bool _isMaxLevel() {
+    final limit = _getTreeSvgPath().length - 1;
+    final userRewardLength = widget.userRewards?.usageCount ?? 0;
+    if (userRewardLength >= limit) {
+      return true;
+    }
+    return false;
+  }
+
   void _handleShake() {
-    if (widget.onShake != null) {
+    if (widget.onShake != null && !_isMaxLevel()) {
       _shakeController.forward().then((_) {
         _shakeController.reverse();
       });
@@ -106,7 +115,7 @@ class _TreeWidgetState extends State<TreeWidget> with TickerProviderStateMixin {
     // 나무 레벨에 따라 SVG 파일 선택
     final treeLevel = _getTreeLevel();
     final treeSvgPath = _getTreeSvgPath();
-    debugPrint('treeLevel: $treeLevel');
+
     final svgPath = treeSvgPath[treeLevel];
 
     return Column(
@@ -193,6 +202,15 @@ class _TreeWidgetState extends State<TreeWidget> with TickerProviderStateMixin {
             overflow: TextOverflow.ellipsis,
           ),
         ),
+        if (_isMaxLevel())
+          Text(
+            '🌳 최고 레벨에 도달했습니다!',
+            style: TextStyle(
+              color: Colors.green[700],
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+          ),
       ],
     );
   }
