@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_common/constants/juny_constants.dart';
 import 'package:flutter_common/flutter_common.dart';
 import 'package:flutter_common/state/user/user_bloc.dart';
 import 'package:flutter_common/state/user/user_event.dart';
 import 'package:flutter_common/state/user/user_selector.dart';
+import 'package:flutter_common/widgets/ad/ad_open_app.dart';
 import 'package:flutter_common/widgets/layout/notice_screen_layout.dart';
 import 'package:flutter_common/widgets/layout/setting_screen_layout.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -20,11 +23,22 @@ class _AppLayoutState extends State<AppLayout> {
   int _currentIndex = 0;
   UserBloc get userBloc => context.read<UserBloc>();
   AppRewardBloc get appRewardBloc => context.read<AppRewardBloc>();
+
   @override
   void initState() {
     super.initState();
+
     userBloc.add(const UserEvent.initialize());
     appRewardBloc.add(const AppRewardEvent.initialize());
+
+    // 앱 오픈 ad
+    AdOpenApp(
+      adMaster: AdMaster(),
+      adUnitId:
+          Platform.isAndroid
+              ? 'ca-app-pub-4656262305566191/7156139470'
+              : 'ca-app-pub-4656262305566191/1440902079',
+    ).listenToAppStateChanges();
   }
 
   @override

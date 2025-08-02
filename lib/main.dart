@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_common/constants/juny_constants.dart';
 import 'package:flutter_common/flutter_common.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_common/state/notice_reply/notice_reply_bloc.dart';
 import 'package:flutter_common/state/user/user_bloc.dart';
 import 'package:flutter_common/state/verification/verification_bloc.dart';
 import 'package:flutter_common/state/verification/verification_listener.dart';
+import 'package:flutter_common/widgets/ad/ad_open_app.dart';
 import 'package:money_tree/app_layout.dart';
 import 'package:money_tree/route.dart';
 
@@ -89,8 +92,10 @@ Future<void> main() async {
   DioClient dioClient = DioClient(
     baseUrl: JunyConstants.apiBaseUrl,
     debugBaseUrl: JunyConstants.apiBaseUrl,
-    useLogInterceptor: true,
+    useLogInterceptor: false,
   );
+
+  
 
   runApp(
     MultiRepositoryProvider(

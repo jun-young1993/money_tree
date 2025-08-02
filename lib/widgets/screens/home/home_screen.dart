@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_common/constants/juny_constants.dart';
 import 'package:flutter_common/flutter_common.dart';
@@ -86,7 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _showRewardedAd() async {
     await _adMaster.createRewardedAd(
-      adUnitId: 'ca-app-pub-4656262305566191/9055227275',
+      adUnitId:
+          Platform.isAndroid
+              ? 'ca-app-pub-4656262305566191/5355655416'
+              : 'ca-app-pub-4656262305566191/9055227275',
       callback: MainShakeAdCallBack(
         onUserEarnedReward: (reward) {
           _appRewardBloc.add(
